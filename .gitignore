@@ -3,3 +3,5 @@
 *.pyc
 
 *example.py
+
+xml-templates/test_account.xml
