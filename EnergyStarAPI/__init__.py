@@ -17,26 +17,33 @@ class EnergyStarTestClient(object):
         self.password = password
 
     def create_account(self, account_file):
+        print ('called create_account')
         if hasattr(account_file, "read"):
             resource = self.domain + '/account'
             account_info = account_file.read()
+            print(account_info)
             headers = {'Content-Type': 'application/xml'}
             acct = str(account_info)
             response = requests.post(resource, data=acct, headers=headers)
-            print(response.text)
             if response.status_code != 200:
+                print(response.text)
                 return _raise_for_status(response)
             return response.text
+        else:
+            print('read file failed')
 
     def get_account_info(self):
+        print ('called get_account_info')
         resource = self.domain + "/account"
 
         response = requests.get(resource, auth=(self.username, self.password))
         if response.status_code != 200:
+            print ('deu ruim')
             return _raise_for_status(response)
         return response.text
 
     def get_meter_list(self, prop_id):
+        print ('called get_meter_list')
         resource = 'https://portfoliomanager.energystar.gov/wstest/property/%s/meter/list' % str(prop_id)
         response = requests.get(resource, auth=(self.username, self.password))
 
@@ -252,3 +259,9 @@ def _raise_for_status(response):
         if more_info and more_info.lower() != response.reason.lower():
             http_error_msg += ".\n\t{0}".format(more_info)
         raise requests.exceptions.HTTPError(http_error_msg, response=response)
+
+
+
+
+def __main__():
+    print('oie')

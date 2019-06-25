@@ -1,0 +1,11 @@
+version: '3.4'
+
+services:
+
+  EnergyStarApi:
+    image: 'energystar'
+    build: .
+    volumes:
+      - ./playground:/opt/EnergyStar/playground
+      - ./xml-templates:/opt/EnergyStar/xml-templates
+      - ./EnergyStarAPI:/opt/EnergyStar/EnergyStarAPI
