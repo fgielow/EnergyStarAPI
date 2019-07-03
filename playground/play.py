@@ -15,7 +15,9 @@ password = account_file_xml[1].text
 
 es = EnergyStarAPI.EnergyStarTestClient(username, password)
 
-# create if not created yet..
+
+
+# create main account if not created yet..
 try:
 	es.create_account(account_file)
 except:
@@ -29,4 +31,71 @@ print(info)
 
 
 
+customer_account_file_path = '/opt/EnergyStar/xml-templates/test_customer_account.xml'
+customer_account_file = open(customer_account_file_path, "r")
+
+# create customer account if not created yet..
+try:
+	es.create_customer_account(customer_account_file)
+except:
+	print('Error on customer account creation. Will continue assuming it failed only because an account already exists for that username.')
+
+
+# now get customers
+
+
+c_info = es.get_customers()
+client_id = ET.fromstring(c_info).find('links/link').get('id') # grab the first client id
+print(client_id)
+
+print("NOW GET PROPERTIES")
+p_info = es.get_properties(client_id)
+print(p_info)
+
+
+
+print("NOW CREATE")
+
+# let's create a new prop now
+property_path = '/opt/EnergyStar/xml-templates/property.xml'
+property_file = open(property_path, "r")
+
+p_info = es.create_property(client_id, property_file)
+print(p_info)
+
+print("now get ID from this /\\")
+
+prop_id = ET.fromstring(p_info).find('id').text
+
+print("CREATED PROP", prop_id)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# close things
+
+
+
+
+
+
+
 account_file.close()
+customer_account_file.close()
+property_file.close()
+
+
+print("DELETE PROP!")
+print(es.delete_property(prop_id))

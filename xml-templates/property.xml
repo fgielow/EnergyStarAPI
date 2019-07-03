@@ -1,0 +1,13 @@
+<property>
+    <name>Broadway School</name>
+    <primaryFunction>K-12 School</primaryFunction>
+    <address address1="arbnco, 121 George Street" city="Glasgow" otherState="Lanarkshire" postalCode="G1 1RD" country="GB"/>
+    <yearBuilt>2000</yearBuilt>
+    <constructionStatus>Existing</constructionStatus>
+    <grossFloorArea temporary="false" units="Square Feet">
+        <value>10000</value>
+    </grossFloorArea>
+    <occupancyPercentage>80</occupancyPercentage>
+    <isFederalProperty>false</isFederalProperty>
+    <notes><![CDATA[Permit license > 5 years old.]]></notes>
+</property>

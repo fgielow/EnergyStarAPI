@@ -1,31 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <account>
-<username>new_user</username>
-<password>EnergyStar!</password>
-<webserviceUser>true</webserviceUser>
-<searchable>false</searchable>
-<contact>
-<firstName>Joe</firstName>
-<lastName>Shmoe</lastName>
-<address address1="123 Main St" city="Arlington"
-state="VA" postalCode="22201" country="US"/>
-<email>ENTER EMAIL ADDRESS HERE</email>
-<phone>"123-123-1345"</phone>
-<jobTitle>Building Administrator Data Exchange User</jobTitle>
-</contact>
-<organization name="LOL">
-<primaryBusiness>Other</primaryBusiness>
-<otherBusinessDescription>Other</otherBusinessDescription>
-<energyStarPartner>false</energyStarPartner>
-</organization>
-<securityAnswers>
-<securityAnswer>
-<question id="-1"/>
-<answer>New York</answer>
-</securityAnswer>
-<securityAnswer>
-<question id="-2"/>
-<answer>Main St</answer>
-</securityAnswer>
-</securityAnswers>
+  <username>arbnco_playground</username>
+  <password>arbncoPl41Gr##</password>
+  <webserviceUser>true</webserviceUser>
+  <searchable>false</searchable>
+  <contact>
+    <firstName>Fernando</firstName>
+    <lastName>Gielow</lastName>
+    <address address1="arbnco, 121 George Street" city="Glasgow" otherState="Lanarkshire" postalCode="G1 1RD" country="GB"/>
+    <email>fgielow@arbnco.com</email>
+    <phone>"+44 1414163939"</phone>
+    <jobTitle>Software Development Manager</jobTitle>
+  </contact>
+  <organization name="arbnco">
+    <primaryBusiness>Other</primaryBusiness>
+    <otherBusinessDescription>Other</otherBusinessDescription>
+    <energyStarPartner>false</energyStarPartner>
+  </organization>
 </account>

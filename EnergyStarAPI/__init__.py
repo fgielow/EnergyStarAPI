@@ -25,12 +25,77 @@ class EnergyStarTestClient(object):
             headers = {'Content-Type': 'application/xml'}
             acct = str(account_info)
             response = requests.post(resource, data=acct, headers=headers)
-            if response.status_code != 200:
+            if response.status_code != 200 and response.status_code != 201:
                 print(response.text)
                 return _raise_for_status(response)
             return response.text
         else:
             print('read file failed')
+
+    def create_customer_account(self, account_file):
+        print ('called create_customer_account')
+        if hasattr(account_file, "read"):
+            resource = self.domain + '/customer'
+            account_info = account_file.read()
+            print(account_info)
+            headers = {'Content-Type': 'application/xml'}
+            acct = str(account_info)
+            response = requests.post(resource, data=acct, auth=(self.username, self.password), headers=headers)
+            if response.status_code != 200 and response.status_code != 201:
+                print(response.text)
+                return _raise_for_status(response)
+            return response.text
+        else:
+            print('read file failed')
+
+
+    def get_customers(self):
+        print ('called get_customers')
+        resource = self.domain + "/customer/list"
+
+        response = requests.get(resource, auth=(self.username, self.password))
+        if response.status_code != 200:
+            print ('deu ruim')
+            return _raise_for_status(response)
+        return response.text
+
+    def delete_property(self, property_id):
+        print ('called create_property')
+        resource = self.domain + "/property/%s" % str(property_id)
+        response = requests.delete(resource, auth=(self.username, self.password))
+        if response.status_code != 200:
+            print(response.text)
+            return _raise_for_status(response)
+        return response.text
+
+
+    def create_property(self, account_id, property_file):
+        print ('called create_property')
+        if hasattr(property_file, "read"):
+            resource = self.domain + "/account/%s/property" % str(account_id)
+            property_info = property_file.read()
+            print(property_info)
+            headers = {'Content-Type': 'application/xml'}
+            prop = str(property_info)
+            response = requests.post(resource, data=prop, auth=(self.username, self.password), headers=headers)
+            if response.status_code != 200 and response.status_code != 201:
+                print(response.status_code)
+                print(response.text)
+                return _raise_for_status(response)
+            return response.text
+        else:
+            print('read file failed')
+
+    def get_properties(self, account_id):
+        print ('called get_properties')
+        resource = self.domain + "/account/%s/property/list" % str(account_id)
+
+        response = requests.get(resource, auth=(self.username, self.password))
+        if response.status_code != 200:
+            print ('deu ruim')
+            return _raise_for_status(response)
+        return response.text
+
 
     def get_account_info(self):
         print ('called get_account_info')
