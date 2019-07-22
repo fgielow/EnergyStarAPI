@@ -69,6 +69,17 @@ prop_id = ET.fromstring(p_info).find('id').text
 
 print("CREATED PROP", prop_id)
 
+print("NOW CREATE METER")
+
+# let's create a new prop now
+meter_path = '/opt/EnergyStar/xml-templates/energy_meter.xml'
+meter_file = open(meter_path, "r")
+
+p_info = es.create_meter(prop_id, meter_file)
+meter_id = ET.fromstring(p_info).find('id').text
+
+print(p_info)
+print("CREATED METER %s" % str(meter_id))
 
 
 
