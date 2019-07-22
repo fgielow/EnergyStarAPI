@@ -82,6 +82,16 @@ print(p_info)
 print("CREATED METER %s" % str(meter_id))
 
 
+print("NOW TRY SENDING METER DATA")
+
+
+consumption_path = '/opt/EnergyStar/xml-templates/consumption_data.xml'
+consumption_file = open(consumption_path, "r")
+
+p_info = es.create_meter_consumption(meter_id, consumption_file)
+
+print(p_info)
+
 
 
 

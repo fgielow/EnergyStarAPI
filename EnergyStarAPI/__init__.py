@@ -103,6 +103,23 @@ class EnergyStarTestClient(object):
         else:
             print('read file failed')
 
+    def create_meter_consumption(self, meter_id, consumption_file):
+        print ('called create_meter_consumption')
+        if hasattr(consumption_file, "read"):
+            resource = self.domain + "/meter/%s/consumptionData" % str(meter_id)
+            property_info = consumption_file.read()
+            print(property_info)
+            headers = {'Content-Type': 'application/xml'}
+            prop = str(property_info)
+            response = requests.post(resource, data=prop, auth=(self.username, self.password), headers=headers)
+            if response.status_code != 200 and response.status_code != 201:
+                print(response.status_code)
+                print(response.text)
+                return _raise_for_status(response)
+            return response.text
+        else:
+            print('read file failed')
+
     def get_properties(self, account_id):
         print ('called get_properties')
         resource = self.domain + "/account/%s/property/list" % str(account_id)
