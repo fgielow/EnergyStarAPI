@@ -17,15 +17,17 @@ class EnergyStarTestClient(object):
         self.username = username
         self.password = password
 
-    def generic_get(self, path):
+    def generic_get(self, path, headers = {}):
+        print('GETTING ' + path)
         resource = self.domain + path
-        response = requests.get(resource, auth=(self.username, self.password))
+        response = requests.get(resource, auth=(self.username, self.password), headers=headers)
         if response.status_code != 200:
             print ('deu ruim')
             return _raise_for_status(response)
         return response.text
 
     def generic_delete(self, path):
+        print('DELETING ' + path)
         resource = self.domain + path
         response = requests.delete(resource, auth=(self.username, self.password))
         if response.status_code != 200:
@@ -33,7 +35,18 @@ class EnergyStarTestClient(object):
             return _raise_for_status(response)
         return response.text
 
+    def generic_put(self, data, path):
+        print('PUTTING ' + path)
+        resource = self.domain + path
+        headers = {'Content-Type': 'application/xml'}
+        response = requests.put(resource, auth=(self.username, self.password), data=data, headers=headers)
+        if response.status_code != 200 and response.status_code != 201:
+            print(response.text)
+            return _raise_for_status(response)
+        return response.text
+
     def generic_post(self, data, path):
+        print('POSTING ' + path)
         resource = self.domain + path
         headers = {'Content-Type': 'application/xml'}
         response = requests.post(resource, auth=(self.username, self.password), data=data, headers=headers)
@@ -74,6 +87,10 @@ class EnergyStarTestClient(object):
         print ('called create_meter')
         return self.generic_post_file(meter_file, "/property/%s/meter" % str(property_id))
 
+    def associate_meter(self, property_id, meter_id):
+        print ('called associate_meter')
+        return self.generic_post({}, "/association/property/%s/meter/%s" % (str(property_id), str(meter_id)))
+
     def create_meter_consumption(self, meter_id, consumption_file):
         print ('called create_meter_consumption')
         return self.generic_post_file(consumption_file, "/meter/%s/consumptionData" % str(meter_id))
@@ -82,14 +99,46 @@ class EnergyStarTestClient(object):
         print ('called get_properties')
         return self.generic_get("/account/%s/property/list" % str(account_id))
 
+    def get_reasons_for_no_score(self, property_id, ending_month, ending_year):
+        print ('called get_reasons_for_no_score')
+        path = "/property/%s/reasonsForNoScore?year=%s&month=%s" % ( str(property_id), str(ending_year), str(ending_month) )
+        return self.generic_get(path)
+
+    def get_energy_star_score(self, property_id, ending_month, ending_year):
+        print ('called get_energy_star_score')
+        path = "/property/%s/metrics?year=%s&month=%s&measurementSystem=%s" % ( str(property_id), str(ending_year), str(ending_month), 'METRIC' )
+        headers = {
+            'PM-Metrics': 'score'
+        }
+        return self.generic_get(path, headers)
+
+    def post_usetype_configuration(self, property_id, usage_type_file):
+        print ('called post_usetype_configuration')
+        return self.generic_post_file(usage_type_file, "/property/%s/propertyUse" % str(property_id))
+
 
     def get_account_info(self):
         print ('called get_account_info')
         return self.generic_get("/account")
 
+    def get_associated_meter_list(self, prop_id):
+        print ('called get_meter_list')
+        return self.generic_get("/association/property/%s/meter" % str(prop_id))
+
     def get_meter_list(self, prop_id):
         print ('called get_meter_list')
-        return self.generic_get("/property/%s/meter/list")
+        return self.generic_get("/property/%s/meter/list" % str(prop_id))
+
+    def put_weather_station_association(self, property_id):
+        print ('called put_weather_station_association')
+        # ASSOCIATING FIXED:
+        #   <station id="31400" country="GB" countryName="United Kingdom" stationName="GLASGOW AIRPORT"/>
+        path="/property/%s/internationalWeatherStation/%s" % ( str(property_id), str(31400))
+        return self.generic_put({}, path)
+
+    def get_weather_stations(self):
+        print ('called get_weather_stations')
+        return self.generic_get("/property/internationalWeatherStation/list?page=1&country=GB")
 
 
 class EnergyStarClient(object):

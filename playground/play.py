@@ -61,13 +61,10 @@ property_path = '/opt/EnergyStar/xml-templates/property.xml'
 property_file = open(property_path, "r")
 
 p_info = es.create_property(client_id, property_file)
-print(p_info)
-
-print("now get ID from this /\\")
-
 prop_id = ET.fromstring(p_info).find('id').text
 
 print("CREATED PROP", prop_id)
+
 
 print("NOW CREATE METER")
 
@@ -78,12 +75,16 @@ meter_file = open(meter_path, "r")
 p_info = es.create_meter(prop_id, meter_file)
 meter_id = ET.fromstring(p_info).find('id').text
 
-print(p_info)
 print("CREATED METER %s" % str(meter_id))
 
 
-print("NOW TRY SENDING METER DATA")
 
+# print("GET METERS LIST")
+# p_info = es.get_meter_list(prop_id)
+# print("GOT " + p_info);
+
+
+print("NOW TRY SENDING METER DATA")
 
 consumption_path = '/opt/EnergyStar/xml-templates/consumption_data.xml'
 consumption_file = open(consumption_path, "r")
@@ -94,14 +95,50 @@ print(p_info)
 
 
 
+print("NOW ASSOCIATE METER")
+p_info = es.associate_meter(prop_id, meter_id)
+print("GOT " + p_info)
+
+
+
+print("DEFINE OFFICE NOW")
+office_path = '/opt/EnergyStar/xml-templates/office_data.xml'
+office_file = open(office_path, "r")
+p_info = es.post_usetype_configuration(prop_id, office_file)
+
+print("GOT " + p_info)
 
 
 
 
+print("DEFINE PARKING NOW")
+parking_path = '/opt/EnergyStar/xml-templates/parking_data.xml'
+parking_file = open(parking_path, "r")
+p_info = es.post_usetype_configuration(prop_id, parking_file)
+print("GOT " + p_info)
 
 
 
+# print("GET WEATHER STTS")
+# p_info = es.get_weather_stations()
+# print("GOT " + p_info);
 
+
+print("PUT WEATHER STT")
+p_info = es.put_weather_station_association(prop_id)
+print("GOT " + p_info);
+
+
+
+print("TRY TO GET SCORE!")
+try:
+  p_info = es.get_energy_star_score(prop_id, 6, 2019)
+  e_score = ET.fromstring(p_info).find('metric').find('value').text
+  print("GOT " + e_score)
+except:
+  print("TRY TO GET REASONS FOR NO SCORE!")
+  p_info = es.get_reasons_for_no_score(prop_id, 6, 2019)
+  print("GOT " + p_info)
 
 
 
