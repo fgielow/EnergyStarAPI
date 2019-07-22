@@ -8,6 +8,7 @@ import datetime
 import xml.etree.ElementTree as Et
 
 
+
 class EnergyStarTestClient(object):
     def __init__(self, username=None, password=None):
         if username is None or password is None:
@@ -16,139 +17,79 @@ class EnergyStarTestClient(object):
         self.username = username
         self.password = password
 
-    def create_account(self, account_file):
-        print ('called create_account')
-        if hasattr(account_file, "read"):
-            resource = self.domain + '/account'
-            account_info = account_file.read()
-            print(account_info)
-            headers = {'Content-Type': 'application/xml'}
-            acct = str(account_info)
-            response = requests.post(resource, data=acct, headers=headers)
-            if response.status_code != 200 and response.status_code != 201:
-                print(response.text)
-                return _raise_for_status(response)
-            return response.text
-        else:
-            print('read file failed')
-
-    def create_customer_account(self, account_file):
-        print ('called create_customer_account')
-        if hasattr(account_file, "read"):
-            resource = self.domain + '/customer'
-            account_info = account_file.read()
-            print(account_info)
-            headers = {'Content-Type': 'application/xml'}
-            acct = str(account_info)
-            response = requests.post(resource, data=acct, auth=(self.username, self.password), headers=headers)
-            if response.status_code != 200 and response.status_code != 201:
-                print(response.text)
-                return _raise_for_status(response)
-            return response.text
-        else:
-            print('read file failed')
-
-
-    def get_customers(self):
-        print ('called get_customers')
-        resource = self.domain + "/customer/list"
-
+    def generic_get(self, path):
+        resource = self.domain + path
         response = requests.get(resource, auth=(self.username, self.password))
         if response.status_code != 200:
             print ('deu ruim')
             return _raise_for_status(response)
         return response.text
 
-    def delete_property(self, property_id):
-        print ('called create_property')
-        resource = self.domain + "/property/%s" % str(property_id)
+    def generic_delete(self, path):
+        resource = self.domain + path
         response = requests.delete(resource, auth=(self.username, self.password))
         if response.status_code != 200:
             print(response.text)
             return _raise_for_status(response)
         return response.text
 
+    def generic_post(self, data, path):
+        resource = self.domain + path
+        headers = {'Content-Type': 'application/xml'}
+        response = requests.post(resource, auth=(self.username, self.password), data=data, headers=headers)
+        if response.status_code != 200 and response.status_code != 201:
+            print(response.text)
+            return _raise_for_status(response)
+        return response.text
+
+    def generic_post_file(self, data_file, path):
+        if hasattr(data_file, "read"):
+            data = data_file.read()
+            parsed_data = str(data)
+            return self.generic_post(parsed_data, path)
+        else:
+            print('read file failed')
+
+    def create_account(self, account_file):
+        print ('called create_account')
+        return self.generic_post_file(account_file, '/account')
+
+    def create_customer_account(self, account_file):
+        print ('called create_customer_account')
+        return self.generic_post_file(account_file, '/customer')
+
+    def get_customers(self):
+        print ('called get_customers')
+        return self.generic_get("/customer/list")
+
+    def delete_property(self, property_id):
+        print ('called delete_property')
+        return self.generic_delete("/property/%s" % str(property_id))
 
     def create_property(self, account_id, property_file):
         print ('called create_property')
-        if hasattr(property_file, "read"):
-            resource = self.domain + "/account/%s/property" % str(account_id)
-            property_info = property_file.read()
-            print(property_info)
-            headers = {'Content-Type': 'application/xml'}
-            prop = str(property_info)
-            response = requests.post(resource, data=prop, auth=(self.username, self.password), headers=headers)
-            if response.status_code != 200 and response.status_code != 201:
-                print(response.status_code)
-                print(response.text)
-                return _raise_for_status(response)
-            return response.text
-        else:
-            print('read file failed')
+        return self.generic_post_file(property_file, "/account/%s/property" % str(account_id))
 
     def create_meter(self, property_id, meter_file):
         print ('called create_meter')
-        if hasattr(meter_file, "read"):
-            resource = self.domain + "/property/%s/meter" % str(property_id)
-            property_info = meter_file.read()
-            print(property_info)
-            headers = {'Content-Type': 'application/xml'}
-            prop = str(property_info)
-            response = requests.post(resource, data=prop, auth=(self.username, self.password), headers=headers)
-            if response.status_code != 200 and response.status_code != 201:
-                print(response.status_code)
-                print(response.text)
-                return _raise_for_status(response)
-            return response.text
-        else:
-            print('read file failed')
+        return self.generic_post_file(meter_file, "/property/%s/meter" % str(property_id))
 
     def create_meter_consumption(self, meter_id, consumption_file):
         print ('called create_meter_consumption')
-        if hasattr(consumption_file, "read"):
-            resource = self.domain + "/meter/%s/consumptionData" % str(meter_id)
-            property_info = consumption_file.read()
-            print(property_info)
-            headers = {'Content-Type': 'application/xml'}
-            prop = str(property_info)
-            response = requests.post(resource, data=prop, auth=(self.username, self.password), headers=headers)
-            if response.status_code != 200 and response.status_code != 201:
-                print(response.status_code)
-                print(response.text)
-                return _raise_for_status(response)
-            return response.text
-        else:
-            print('read file failed')
+        return self.generic_post_file(consumption_file, "/meter/%s/consumptionData" % str(meter_id))
 
     def get_properties(self, account_id):
         print ('called get_properties')
-        resource = self.domain + "/account/%s/property/list" % str(account_id)
-
-        response = requests.get(resource, auth=(self.username, self.password))
-        if response.status_code != 200:
-            print ('deu ruim')
-            return _raise_for_status(response)
-        return response.text
+        return self.generic_get("/account/%s/property/list" % str(account_id))
 
 
     def get_account_info(self):
         print ('called get_account_info')
-        resource = self.domain + "/account"
-
-        response = requests.get(resource, auth=(self.username, self.password))
-        if response.status_code != 200:
-            print ('deu ruim')
-            return _raise_for_status(response)
-        return response.text
+        return self.generic_get("/account")
 
     def get_meter_list(self, prop_id):
         print ('called get_meter_list')
-        resource = 'https://portfoliomanager.energystar.gov/wstest/property/%s/meter/list' % str(prop_id)
-        response = requests.get(resource, auth=(self.username, self.password))
-
-        if response.status_code != 200:
-            return _raise_for_status(response)
-        return response
+        return self.generic_get("/property/%s/meter/list")
 
 
 class EnergyStarClient(object):
