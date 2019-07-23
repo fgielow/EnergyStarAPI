@@ -1,0 +1,24 @@
+<k12School>
+  <name>K12 school unit</name>
+  <useDetails>
+    <!-- min size: 1000 sqrft -->
+    <totalGrossFloorArea units="Square Feet" temporary="false"><value>1000</value></totalGrossFloorArea>
+    <numberOfWorkers><value>20</value></numberOfWorkers>
+
+    <!-- valid values: [Yes, No] -->
+    <isHighSchool><value>Yes</value></isHighSchool>
+
+    <!-- valid values: [Yes, No] -->
+    <openOnWeekends><value>Yes</value></openOnWeekends>
+
+    <!-- valid values: [Yes, No] -->
+    <cookingFacilities><value>Yes</value></cookingFacilities>
+
+    <!-- valid values: [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100] -->
+    <percentHeated><value>20</value></percentHeated>
+
+    <!-- valid values: [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100] -->
+    <percentCooled><value>20</value></percentCooled>
+
+  </useDetails>
+</k12School>

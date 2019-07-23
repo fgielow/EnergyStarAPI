@@ -1,0 +1,10 @@
+<parking>
+  <name>Parking spot</name>
+  <useDetails>
+    <!-- valid values: [Yes, No] -->
+    <supplementalHeating><value>No</value></supplementalHeating>
+    <openFootage units="Square Feet"><value>800</value></openFootage>
+    <completelyEnclosedFootage units="Square Feet"><value>300</value></completelyEnclosedFootage>
+    <partiallyEnclosedFootage units="Square Feet"><value>300</value></partiallyEnclosedFootage>
+  </useDetails>
+</parking>

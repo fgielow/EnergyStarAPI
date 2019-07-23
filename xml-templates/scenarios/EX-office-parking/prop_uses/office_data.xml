@@ -2,11 +2,17 @@
 <office>
   <name>Office prop</name>
   <useDetails>
+    <!-- min size: 1000 sqrft -->
     <totalGrossFloorArea units="Square Feet" temporary="false"><value>1100</value></totalGrossFloorArea>
     <weeklyOperatingHours temporary="false"><value>50</value></weeklyOperatingHours>
     <numberOfWorkers temporary="false"><value>50</value></numberOfWorkers>
     <numberOfComputers temporary="false"><value>40</value></numberOfComputers>
+
+    <!-- Valid values: [50% or more, Less than 50%, Not Air Conditioned] -->
     <percentOfficeCooled temporary="false"><value>Less than 50%</value></percentOfficeCooled>
+
+    <!-- Valid values: [50% or more, Less than 50%, Not Air Conditioned] -->
     <percentOfficeHeated temporary="false"><value>Less than 50%</value></percentOfficeHeated>
+
   </useDetails>
 </office>

@@ -1,6 +1,7 @@
 import os
 import sys
 import glob
+import hashlib
 import xml.etree.ElementTree as ET
 
 sys.path.append('../')
@@ -8,23 +9,36 @@ sys.path.append('./')
 import EnergyStarAPI
 
 
+def calculate_checksum(filenames):
+  hash = hashlib.md5()
+  for fn in filenames:
+    if os.path.isfile(fn):
+      hash.update(open(fn, "rb").read())
+  return hash.hexdigest()
+
+
 class EnergyStarSim:
 
   base_path = '/opt/EnergyStar/xml-templates/'
 
   def __del__(self):
-    print("DELETE PROP "+self.property_id+"!")
-    print(self.ES.delete_property(self.property_id))
+    try:
+      print("DELETE PROP "+self.property_id+"!")
+      print(self.ES.delete_property(self.property_id))
+    except:
+      self.property_id = None
 
-  def __init__(self, scenario = 'default'):
+  def __init__(self, scenario):
 
     if (scenario == 'common'):
       raise Exception("Scenario cannot be named 'common'")
 
-    account_file_path = self.base_path +'common/test_account.xml'
-
     self.scenario = scenario
 
+
+  def connect(self):
+
+    account_file_path = self.base_path +'common/test_account.xml'
     account_file = open(account_file_path, "r")
     account_file_xml = ET.parse(account_file_path).getroot()
 
@@ -53,6 +67,13 @@ class EnergyStarSim:
 
     self.client_id = ET.fromstring(c_info).find('links/link').get('id') # grab the first client id
     print("CUSTOMER ID: " + self.client_id)
+
+  def get_cache_hash(self):
+    a = glob.glob(self.get_path('')+'/**/*.xml')
+    b = glob.glob(self.get_path('')+'/*.xml')
+    c = a + b
+    c.sort()
+    return calculate_checksum(c)
 
 
   def get_path(self, file):
@@ -112,6 +133,29 @@ class EnergyStarSim:
       p_info = self.ES.post_usetype_configuration(self.property_id, usage_file)
       print("GOT " + p_info)
 
+
+  def cache_score(self):
+    base_path = '/opt/EnergyStar/cached_scores/'
+    h = self.get_cache_hash()
+    if (self.e_score and int(self.e_score) > 0):
+      f = open(base_path+h, "w")
+      f.write(self.e_score)
+      f.close()
+      print("Updated score for " + h + " to " + self.e_score)
+
+  def get_cached_score(self):
+    base_path = '/opt/EnergyStar/cached_scores/'
+    h = self.get_cache_hash()
+    score = None
+    if (os.path.isfile(base_path+h)):
+      f = open(base_path+h, "r")
+      score = f.read()
+      f.close()
+      print("Found cached score for " + h + " of " + score)
+    return score
+
+
+
   def get_score(self):
     print("NOW TRYING TO GET SCORE.")
     self.e_score = -1
@@ -125,6 +169,7 @@ class EnergyStarSim:
       p_info = self.ES.get_reasons_for_no_score(self.property_id, 12, 2018)
       print("GOT ERROR: " + p_info)
 
+    self.cache_score()
     return self.e_score
 
 
@@ -146,15 +191,23 @@ scores = {}
 for sc in scenarios:
   print("!! INIT - PROCESS SCENARIO " + sc)
   sim = EnergyStarSim('scenarios/'+sc) 
-  sim.create_property()
-  sim.create_meter()
-  sim.define_property_uses()
-  scores[sc] = sim.get_score()
+  cached_score = sim.get_cached_score()
+
+  if (cached_score != None):
+    scores[sc] = cached_score
+  else:
+    sim.connect()
+    sim.create_property()
+    sim.create_meter()
+    sim.define_property_uses()
+    scores[sc] = sim.get_score()
+
   del sim
 
 
-print("SUMMARY OF SCORES:")
+print("\n\n\n\nSUMMARY OF SCORES:")
 print(scores)
+print("\n\n")
 
 
 

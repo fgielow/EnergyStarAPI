@@ -1,9 +1,0 @@
-<parking>
-  <name>Parking spot</name>
-  <useDetails>
-    <supplementalHeating temporary="false"><value>No</value></supplementalHeating>
-    <openFootage units="Square Feet" temporary="false"><value>300</value></openFootage>
-    <completelyEnclosedFootage units="Square Feet" temporary="false"><value>300</value></completelyEnclosedFootage>
-    <partiallyEnclosedFootage units="Square Feet" temporary="false"><value>300</value></partiallyEnclosedFootage>
-  </useDetails>
-</parking>
