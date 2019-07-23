@@ -1,8 +1,8 @@
 run:
-	docker container run -v /c/git/EnergyStarAPI:/opt/EnergyStar --rm energystar python playground/play.py
+	docker container run -v /Users/fgielow/git/_PC/EnergyStarAPI:/opt/EnergyStar --rm energystar python playground/play.py
 
 bash:
-	docker container run -it -v /c/git/EnergyStarAPI:/opt/EnergyStar --rm energystar bash
+	docker container run -it -v /Users/fgielow/git/_PC/EnergyStarAPI:/opt/EnergyStar --rm energystar bash
 
 exec:
 	docker container exec -it energystarapi_EnergyStarApi_1 python playground/play.py

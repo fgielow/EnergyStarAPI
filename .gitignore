@@ -1,8 +1,7 @@
 .idea/
-
+.DS_Store
 *.pyc
 
 *example.py
 
-xml-templates/test_account.xml
-xml-templates/test_customer_account.xml
+xml-templates/common/

@@ -1,4 +1,5 @@
 import sys
+import glob
 sys.path.append('../')
 sys.path.append('./')
 import EnergyStarAPI
@@ -8,12 +9,20 @@ import xml.etree.ElementTree as ET
 
 class EnergyStarSim:
 
+  base_path = '/opt/EnergyStar/xml-templates/'
+
   def __del__(self):
     print("DELETE PROP "+self.property_id+"!")
     print(self.ES.delete_property(self.property_id))
 
-  def __init__(self):
-    account_file_path = '/opt/EnergyStar/xml-templates/test_account.xml'
+  def __init__(self, scenario = 'default'):
+
+    if (scenario == 'common'):
+      raise Exception("Scenario cannot be named 'common'")
+
+    account_file_path = self.base_path +'common/test_account.xml'
+
+    self.scenario = scenario
 
     account_file = open(account_file_path, "r")
     account_file_xml = ET.parse(account_file_path).getroot()
@@ -29,7 +38,7 @@ class EnergyStarSim:
     except:
       print('Error on account creation. Will continue assuming it failed only because an account already exists for that username.')
 
-    customer_account_file_path = '/opt/EnergyStar/xml-templates/test_customer_account.xml'
+    customer_account_file_path = self.base_path +'common/test_customer_account.xml'
     customer_account_file = open(customer_account_file_path, "r")
 
     # create customer account if not created yet..
@@ -45,11 +54,13 @@ class EnergyStarSim:
     print("CUSTOMER ID: " + self.client_id)
 
 
+  def get_path(self, file):
+    return self.base_path + self.scenario + '/' + file
 
   def create_property(self):
 
     # let's create a new prop now
-    property_path = '/opt/EnergyStar/xml-templates/property.xml'
+    property_path = self.get_path('property.xml')
     property_file = open(property_path, "r")
 
     p_info = self.ES.create_property(self.client_id, property_file)
@@ -66,7 +77,7 @@ class EnergyStarSim:
   def create_meter(self):
 
     # let's create a new prop now
-    meter_path = '/opt/EnergyStar/xml-templates/energy_meter.xml'
+    meter_path = self.get_path('energy_meter.xml')
     meter_file = open(meter_path, "r")
 
     p_info = self.ES.create_meter(self.property_id, meter_file)
@@ -76,7 +87,7 @@ class EnergyStarSim:
 
     print("NOW SEND METER DATA")
 
-    consumption_path = '/opt/EnergyStar/xml-templates/consumption_data.xml'
+    consumption_path = self.get_path('consumption_data.xml')
     consumption_file = open(consumption_path, "r")
 
     p_info = self.ES.create_meter_consumption(self.meter_id, consumption_file)
@@ -91,18 +102,14 @@ class EnergyStarSim:
 
 
   def define_property_uses(self):
-    print("DEFINE OFFICE NOW")
-    office_path = '/opt/EnergyStar/xml-templates/office_data.xml'
-    office_file = open(office_path, "r")
-    p_info = self.ES.post_usetype_configuration(self.property_id, office_file)
-    print("GOT " + p_info)
-
-    print("DEFINE PARKING NOW")
-    parking_path = '/opt/EnergyStar/xml-templates/parking_data.xml'
-    parking_file = open(parking_path, "r")
-    p_info = self.ES.post_usetype_configuration(self.property_id, parking_file)
-    print("GOT " + p_info)
-
+    uses_files = glob.glob(self.get_path('prop_uses/*.xml'))
+    print("PROPERTY USES:")
+    print(uses_files)
+    for u_file in uses_files:
+      print("configuring usage file: " + u_file)
+      usage_file = open(u_file, "r")
+      p_info = self.ES.post_usetype_configuration(self.property_id, usage_file)
+      print("GOT " + p_info)
 
   def get_score(self):
     print("NOW TRYING TO GET SCORE.")
@@ -118,7 +125,10 @@ class EnergyStarSim:
 
 
 
-sim = EnergyStarSim() 
+
+
+
+sim = EnergyStarSim('default') 
 sim.create_property()
 sim.create_meter()
 sim.define_property_uses()
