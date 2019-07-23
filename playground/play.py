@@ -1,10 +1,11 @@
+import os
 import sys
 import glob
+import xml.etree.ElementTree as ET
+
 sys.path.append('../')
 sys.path.append('./')
 import EnergyStarAPI
-
-import xml.etree.ElementTree as ET
 
 
 class EnergyStarSim:
@@ -113,14 +114,18 @@ class EnergyStarSim:
 
   def get_score(self):
     print("NOW TRYING TO GET SCORE.")
+    self.e_score = -1
+
     try:
       p_info = self.ES.get_energy_star_score(self.property_id, 12, 2018)
       self.e_score = ET.fromstring(p_info).find('metric').find('value').text
-      print("GOT " + self.e_score)
+      print("GOT ENERGY STAR SCORE:" + self.e_score)
     except:
-      print("TRY TO GET REASONS FOR NO SCORE!")
+      print("TRY TO GET REASONS FOR NO SCORE!",  sys.exc_info()[0])
       p_info = self.ES.get_reasons_for_no_score(self.property_id, 12, 2018)
-      print("GOT " + p_info)
+      print("GOT ERROR: " + p_info)
+
+    return self.e_score
 
 
 
@@ -128,13 +133,34 @@ class EnergyStarSim:
 
 
 
-sim = EnergyStarSim('default') 
-sim.create_property()
-sim.create_meter()
-sim.define_property_uses()
-sim.get_score()
 
-del sim
+
+
+scenarios = [os.path.basename(x) for x in glob.glob('/opt/EnergyStar/xml-templates/scenarios/*')]
+
+print("SCENARIOS:")
+print(scenarios)
+
+scores = {}
+
+for sc in scenarios:
+  print("!! INIT - PROCESS SCENARIO " + sc)
+  sim = EnergyStarSim('scenarios/'+sc) 
+  sim.create_property()
+  sim.create_meter()
+  sim.define_property_uses()
+  scores[sc] = sim.get_score()
+  del sim
+
+
+print("SUMMARY OF SCORES:")
+print(scores)
+
+
+
+
+
+
 
 
 
