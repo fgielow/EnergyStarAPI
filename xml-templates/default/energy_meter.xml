@@ -3,6 +3,6 @@
     <name>Electric Main Meter</name>
     <unitOfMeasure>kWh (thousand Watt-hours)</unitOfMeasure>
     <metered>true</metered>
-    <firstBillDate>2018-07-01</firstBillDate>
+    <firstBillDate>2018-01-01</firstBillDate>
     <inUse>true</inUse>
 </meter>

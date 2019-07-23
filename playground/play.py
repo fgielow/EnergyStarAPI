@@ -114,12 +114,12 @@ class EnergyStarSim:
   def get_score(self):
     print("NOW TRYING TO GET SCORE.")
     try:
-      p_info = self.ES.get_energy_star_score(self.property_id, 6, 2019)
+      p_info = self.ES.get_energy_star_score(self.property_id, 12, 2018)
       self.e_score = ET.fromstring(p_info).find('metric').find('value').text
       print("GOT " + self.e_score)
     except:
       print("TRY TO GET REASONS FOR NO SCORE!")
-      p_info = self.ES.get_reasons_for_no_score(self.property_id, 6, 2019)
+      p_info = self.ES.get_reasons_for_no_score(self.property_id, 12, 2018)
       print("GOT " + p_info)
 
 
